@@ -1,3 +1,5 @@
+#funcion de calculo de total con impuesto
+
 def calcular_total(precio, impuesto):
 
     descuento_fantasma = 0.10
