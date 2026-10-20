@@ -2,21 +2,31 @@ name: QualityGate-SonarCloud
 on:
   push:
     branches: ["main"]
+
 jobs:
   sonarcloud:
     name: AnalisisSonarCloud
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del codigo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Analisis
-        uses: SonarSource/sonarcloud-github-action@master
+          fetch-depth: 0
+
+      - name: Verificar SONAR_TOKEN
+        run: |
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "SONAR_TOKEN vacío o no configurado en esta ejecución"
+            exit 1
+          fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Analisis SonarCloud
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
+        env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=SonarLab
+            -Dsonar.projectKey=sonarlab_SonarLab
             -Dsonar.organization=sonarlab
